@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VERA Valuation VCI Calculator</title>
+  <style>
+    body {
+      font-family: Arial;
+      max-width: 750px;
+      margin: 40px auto;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    h1 { font-size: 24px; }
+    .desc { font-size: 13px; color: #555; margin-top: -8px; margin-bottom: 10px; }
+
+    .input-group { margin: 22px 0; }
+    label { font-weight: bold; display: block; margin-bottom: 6px; }
+
+    .row { display: flex; gap: 10px; align-items: center; }
+    .row span { font-weight: bold; width: 40px; text-align: right; }
+
+    input[type=range] { width: 100%; }
+
+    .box {
+      margin-top: 25px;
+      padding: 16px;
+      background: #f5f7ff;
+      border-radius: 10px;
+      border: 1px solid #cfd6ff;
+    }
+    .vci { font-size: 32px; font-weight: bold; }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      color: white;
+      font-size: 13px;
+      font-weight: bold;
+      display: inline-block;
+      margin-top: 8px;
+    }
+    .low { background: #e67e22; }
+    .med { background: #3498db; }
+    .high { background: #2ecc71; }
+
+    .equityBox {
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 10px;
+      background: #fff7ed;
+      border: 1px solid #ffd9b3;
+    }
+    .equityVal { font-size: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h1>VERA – Valuation VCI (Three-Layer Model)</h1>
+<p>Adjust the sliders to assess how valuable the AI venture is based on the VERA model:</p>
+
+<!-- Intrinsic Value -->
+<div class="input-group">
+  <label>Intrinsic Value (50%)</label>
+  <p class="desc">Measures Ionix’s unique knowledge, code IP, algorithms, and the difficulty of replicating the solution.</p>
+  <div class="row">
+    <input type="range" id="intrinsic" min="0" max="100" value="60">
+    <span id="intrinsicVal">60</span>
+  </div>
+</div>
+
+<!-- Performance Value -->
+<div class="input-group">
+  <label>Performance Value (30%)</label>
+  <p class="desc">Represents expected ROI for the client — revenue growth, cost savings, efficiency gains, or risk reduction.</p>
+  <div class="row">
+    <input type="range" id="performance" min="0" max="100" value="50">
+    <span id="performanceVal">50</span>
+  </div>
+</div>
+
+<!-- Market Value -->
+<div class="input-group">
+  <label>Market Value (20%)</label>
+  <p class="desc">Measures market maturity, sector growth potential, and scalability of the AI product.</p>
+  <div class="row">
+    <input type="range" id="market" min="0" max="100" value="40">
+    <span id="marketVal">40</span>
+  </div>
+</div>
+
+<!-- Output Box -->
+<div class="box">
+  <div>Valuation VCI Score:</div>
+  <div class="vci" id="vciOutput">0.0</div>
+  <span class="badge" id="rating">-</span>
+</div>
+
+<!-- Equity Recommendation -->
+<div class="equityBox">
+  <div>Recommended Equity Share for Ionix:</div>
+  <div class="equityVal" id="equityOutput">-</div>
+</div>
+
+<script>
+function updateVCI() {
+  let intrinsic = Number(document.getElementById("intrinsic").value);
+  let performance = Number(document.getElementById("performance").value);
+  let market = Number(document.getElementById("market").value);
+
+  document.getElementById("intrinsicVal").textContent = intrinsic;
+  document.getElementById("performanceVal").textContent = performance;
+  document.getElementById("marketVal").textContent = market;
+
+  // Weighted VCI
+  let vci = 0.50 * intrinsic +
+            0.30 * performance +
+            0.20 * market;
+  document.getElementById("vciOutput").textContent = vci.toFixed(1);
+
+  // Rating badge
+  const badge = document.getElementById("rating");
+  if (vci < 40) {
+    badge.textContent = "LOW VALUE";
+    badge.className = "badge low";
+  } else if (vci <= 70) {
+    badge.textContent = "MEDIUM VALUE";
+    badge.className = "badge med";
+  } else {
+    badge.textContent = "HIGH VALUE";
+    badge.className = "badge high";
+  }
+
+  // EQUITY Recommendation
+  const equityBox = document.getElementById("equityOutput");
+
+  if (vci < 40) {
+    equityBox.textContent = "10–20% equity share (low Ionix contribution)";
+  } else if (vci <= 70) {
+    equityBox.textContent = "20–35% equity share (balanced contribution)";
+  } else {
+    equityBox.textContent = "35–50% equity share (high-value, high-IP contribution)";
+  }
+}
+
+["intrinsic", "performance", "market"].forEach(id => {
+  document.getElementById(id).addEventListener("input", updateVCI);
+});
+
+// Initialise on load
+updateVCI();
+</script>
+
+</body>
+</html>
